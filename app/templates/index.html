@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <!-- Vehicle Health Status -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Vehicle Health Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="health-indicator mb-3">
+                            <label for="health-slider" class="form-label">Simulate Vehicle Condition</label>
+                            <input type="range" class="form-range" id="health-slider" min="0" max="100" value="100">
+                        </div>
+                        <div id="health-status" class="alert alert-success">
+                            Vehicle Status: Healthy
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="healthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts and Notifications -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Alerts</h5>
+            </div>
+            <div class="card-body">
+                <div id="alerts-container">
+                    <!-- Alerts will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Vehicle Metrics -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title">Engine Temperature</h6>
+                <div class="metric" id="engine-temp">0°C</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title">Oil Pressure</h6>
+                <div class="metric" id="oil-pressure">0 PSI</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title">Battery Voltage</h6>
+                <div class="metric" id="battery-voltage">0V</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title">Fuel Level</h6>
+                <div class="metric" id="fuel-level">0%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Nearby Garages -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Nearby Garages</h5>
+            </div>
+            <div class="card-body">
+                <div id="garages-container" class="row">
+                    <!-- Garages will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize the dashboard when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDashboard();
+    });
+</script>
+{% endblock %}

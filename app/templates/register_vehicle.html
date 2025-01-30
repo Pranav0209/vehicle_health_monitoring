@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Register New Vehicle</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('main.register_vehicle') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.registration_number.label(class="form-label") }}
+                            {{ form.registration_number(class="form-control", placeholder="e.g., MH02AB1234") }}
+                            {% for error in form.registration_number.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.fuel_type.label(class="form-label") }}
+                            {{ form.fuel_type(class="form-select") }}
+                            {% for error in form.fuel_type.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {{ form.make.label(class="form-label") }}
+                            {{ form.make(class="form-control", placeholder="e.g., Maruti Suzuki") }}
+                            {% for error in form.make.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.model.label(class="form-label") }}
+                            {{ form.model(class="form-control", placeholder="e.g., Swift") }}
+                            {% for error in form.model.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.year.label(class="form-label") }}
+                            {{ form.year(class="form-control", placeholder="e.g., 2020") }}
+                            {% for error in form.year.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {{ form.current_mileage.label(class="form-label") }}
+                            {{ form.current_mileage(class="form-control", placeholder="e.g., 15000") }}
+                            {% for error in form.current_mileage.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.service_interval_km.label(class="form-label") }}
+                            {{ form.service_interval_km(class="form-control", placeholder="e.g., 10000") }}
+                            {% for error in form.service_interval_km.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {{ form.last_service_date.label(class="form-label") }}
+                            {{ form.last_service_date(class="form-control", type="date") }}
+                            {% for error in form.last_service_date.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
