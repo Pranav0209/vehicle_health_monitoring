@@ -30,7 +30,7 @@ if __name__ == '__main__':
     init_db()
     
     # Get port from environment variable or use default
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5001))
     
     # Run the application
     app.run(host='0.0.0.0', port=port, debug=True)

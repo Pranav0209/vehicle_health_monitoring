@@ -36,3 +36,29 @@ def predict_failure():
     except Exception as e:
         logger.error(f"Error in predict_failure: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 400
+
+@prediction_bp.route('/api/find-garages', methods=['POST'])
+def find_garages():
+    try:
+        logger.info("Received garage search request")
+        data = request.get_json()
+        pincode = data.get('pincode')
+        
+        if not pincode:
+            return jsonify({'error': 'Pincode is required'}), 400
+            
+        # Import here to avoid circular import
+        from app.services.garage_service import GarageService
+        garage_service = GarageService()
+        
+        # Get nearby garages
+        garages, map_html = garage_service.get_nearby_garages(pincode)
+        
+        return jsonify({
+            'garages': garages,
+            'map_html': map_html
+        })
+    
+    except Exception as e:
+        logger.error(f"Error in find_garages: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 400

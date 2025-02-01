@@ -90,7 +90,7 @@
 
 <!-- Garage Modal -->
 <div class="modal fade" id="garageModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Nearby Garages</h5>
@@ -109,6 +109,10 @@
 {% block scripts %}
 <!-- Base scripts -->
 {{ super() }}
+<!-- SweetAlert2 for nice prompts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- Failure prediction script -->
 <script src="{{ url_for('static', filename='js/failure_prediction.js') }}"></script>
+<!-- Garage locator script -->
+<script src="{{ url_for('static', filename='js/garage_locator.js') }}"></script>
 {% endblock %}
