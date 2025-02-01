@@ -26,6 +26,9 @@
         </div>
     </div>
 
+    <!-- Include Failure Prediction Section -->
+    {% include 'failure_prediction.html' %}
+
     <!-- Vehicles Grid -->
     <div class="row">
         {% for vehicle in vehicles %}
@@ -46,17 +49,11 @@
                         <div class="service-status mb-3">
                             <p class="mb-2"><strong>Next Service:</strong></p>
                             {% if days_to_service <= 0 %}
-                            <div class="alert alert-danger mb-0">
-                                Service Overdue!
-                            </div>
+                            <div class="alert alert-danger mb-0">Service Overdue!</div>
                             {% elif days_to_service <= 15 %}
-                            <div class="alert alert-warning mb-0">
-                                Service due in {{ days_to_service }} days
-                            </div>
+                            <div class="alert alert-warning mb-0">Service due in {{ days_to_service }} days</div>
                             {% else %}
-                            <div class="alert alert-success mb-0">
-                                {{ days_to_service }} days until next service
-                            </div>
+                            <div class="alert alert-success mb-0">{{ days_to_service }} days until next service</div>
                             {% endif %}
                         </div>
                     </div>
@@ -110,45 +107,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize garage buttons
-    document.querySelectorAll('.find-garage-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const vehicleId = this.dataset.vehicleId;
-            findNearbyGarages();
-        });
-    });
-
-    function findNearbyGarages() {
-        fetch('/api/nearby-garages')
-            .then(response => response.json())
-            .then(data => {
-                const garagesList = document.getElementById('garages-list');
-                garagesList.innerHTML = data.garages.map(garage => `
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${garage.name}</h5>
-                                <p class="card-text">
-                                    <strong>Address:</strong> ${garage.address}<br>
-                                    <strong>Distance:</strong> ${garage.distance}<br>
-                                    <strong>Rating:</strong> ${'★'.repeat(Math.floor(garage.rating))}${'☆'.repeat(5-Math.floor(garage.rating))} (${garage.rating})<br>
-                                    <strong>Specialties:</strong> ${garage.specialties.join(', ')}<br>
-                                    <strong>Phone:</strong> ${garage.phone}
-                                </p>
-                                <a href="tel:${garage.phone}" class="btn btn-primary">
-                                    <i class="fas fa-phone"></i> Call Now
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                
-                new bootstrap.Modal(document.getElementById('garageModal')).show();
-            })
-            .catch(error => console.error('Error:', error));
-    }
-});
-</script>
+<!-- Base scripts -->
+{{ super() }}
+<!-- Failure prediction script -->
+<script src="{{ url_for('static', filename='js/failure_prediction.js') }}"></script>
 {% endblock %}

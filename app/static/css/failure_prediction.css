@@ -1,0 +1,51 @@
+.prediction-results {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.probability-bar-container {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.probability-label {
+    width: 120px;
+    font-size: 0.9em;
+}
+
+.probability-bar {
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    flex-grow: 1;
+}
+
+.probability-value {
+    width: 60px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+.slider-value {
+    margin-left: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+#prediction-result {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+#prediction-probability {
+    color: #34495e;
+    margin-bottom: 25px;
+}
