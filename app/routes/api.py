@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models.user import Vehicle
+from app.models.user import Vehicle,ServiceHistory
 from app.models.vehicle_health import VehicleHealth
 from app import db
 from datetime import datetime

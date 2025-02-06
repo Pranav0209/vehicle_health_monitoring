@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Welcome, {{ current_user.name }}</h2>
+            <p class="text-muted">Live Vehicle Monitoring</p>
+        </div>
+    </div>
+
+    <!-- Vehicle Monitoring Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Live Vehicle Data</h5>
+                    <p class="text-muted">Monitor your vehicles in real-time</p>
+                    
+                    <table class="table table-striped" id="vehicle-monitor-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle ID</th>
+                                <th>Predicted Failure Type</th>
+                                <th>Predicted Engine Condition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be dynamically populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Connection Status -->
+<div id="status" class="alert alert-info text-center mt-4" role="alert">
+    Connecting to server...
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- Base scripts -->
+{{ super() }}
+
+<!-- WebSocket for live monitoring -->
+<script>
+    let socket;
+    const vehicleTableBody = document.getElementById('vehicle-monitor-table').getElementsByTagName('tbody')[0];
+    const statusDiv = document.getElementById('status');
+
+    // Function to establish WebSocket connection and listen for incoming messages
+    function connectWebSocket() {
+        socket = new WebSocket('ws://localhost:8765/monitor'); // Replace with actual WebSocket URI
+
+        socket.onopen = () => {
+            console.log('Connected to the WebSocket server.');
+            statusDiv.textContent = 'Connected to server!';
+            statusDiv.classList.remove('alert-info');
+            statusDiv.classList.add('alert-success');
+        };
+
+        socket.onmessage = (event) => {
+            const vehicleData = JSON.parse(event.data);
+            updateVehicleData(vehicleData);
+        };
+
+        socket.onclose = (event) => {
+            if (event.wasClean) {
+                console.log('Connection closed cleanly.');
+            } else {
+                console.error('Connection closed unexpectedly.');
+                statusDiv.textContent = 'Disconnected from server. Reconnecting...';
+                statusDiv.classList.remove('alert-success');
+                statusDiv.classList.add('alert-warning');
+                setTimeout(connectWebSocket, 5000);  // Reconnect after 5 seconds
+            }
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            statusDiv.textContent = 'Error connecting to server.';
+            statusDiv.classList.remove('alert-info');
+            statusDiv.classList.add('alert-danger');
+        };
+    }
+
+    // Function to update or add vehicle data to the table
+    function updateVehicleData(vehicleData) {
+        let existingRow = document.getElementById(vehicleData.vehicle_id);
+
+        // If the vehicle row already exists, update it
+        if (existingRow) {
+            existingRow.cells[1].textContent = vehicleData['Predicted Failure Type'];
+            existingRow.cells[2].textContent = vehicleData['Predicted Engine Condition'];
+        } else {
+            // If the vehicle row doesn't exist, create a new row
+            const newRow = vehicleTableBody.insertRow();
+            newRow.id = vehicleData.vehicle_id; // Set ID to vehicle ID
+
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+
+            cell1.textContent = vehicleData.vehicle_id;
+            cell2.textContent = vehicleData['Predicted Failure Type'];
+            cell3.textContent = vehicleData['Predicted Engine Condition'];
+        }
+    }
+
+    // Initialize WebSocket connection on page load
+    window.onload = () => {
+        connectWebSocket();
+    };
+</script>
+
+{% endblock %}
