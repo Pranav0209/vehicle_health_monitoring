@@ -115,9 +115,6 @@
                         <label class="custom-control-label" for="autoSimulation">Auto Simulation</label>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <button class="btn btn-primary" id="findGarages">Find Nearby Garages</button>
-                </div>
             </div>
         </div>
     </div>
@@ -152,13 +149,19 @@ function getParameters() {
 // Function to update action items
 function updateActionItems(data) {
     const actionItemsDiv = document.getElementById('actionItems');
-    actionItemsDiv.innerHTML = '';
-    
+    actionItemsDiv.innerHTML = ''; // Clear previous alerts
+
     if (data.action_items && data.action_items.length > 0) {
+        let hasCriticalIssues = false;
+
         data.action_items.forEach(item => {
             const alertClass = item.severity === 'high' ? 'danger' : 
                              item.severity === 'medium' ? 'warning' : 'info';
-            
+
+            if (item.severity === 'high') {
+                hasCriticalIssues = true;
+            }
+
             actionItemsDiv.innerHTML += `
                 <div class="alert alert-${alertClass}" role="alert">
                     <strong>${item.message}</strong><br>
@@ -166,10 +169,17 @@ function updateActionItems(data) {
                 </div>
             `;
         });
+
+        // If no critical issues but previous message exists, clear it
+        if (!hasCriticalIssues) {
+            actionItemsDiv.innerHTML = '<div class="alert alert-success">No action items - All systems normal</div>';
+        }
     } else {
+        // If no issues, show success message
         actionItemsDiv.innerHTML = '<div class="alert alert-success">No action items - All systems normal</div>';
     }
 }
+
 
 // Function to update vehicle health
 function updateVehicleHealth() {
@@ -213,6 +223,7 @@ Object.entries(sliders).forEach(([id, unit]) => {
 });
 
 // Auto simulation toggle
+// Auto simulation toggle
 document.getElementById('autoSimulation').addEventListener('change', function(e) {
     if (e.target.checked) {
         // Start auto simulation
@@ -221,17 +232,24 @@ document.getElementById('autoSimulation').addEventListener('change', function(e)
             Object.keys(sliders).forEach(id => {
                 const slider = document.getElementById(id);
                 const range = slider.max - slider.min;
-                const newValue = parseFloat(slider.value) + (Math.random() - 0.5) * range * 0.1;
-                slider.value = Math.max(slider.min, Math.min(slider.max, newValue));
-                updateSliderValue(id, slider.value.toFixed(1), sliders[id]);
+                
+                // Generate a new value within a range
+                let newValue = parseFloat(slider.value) + (Math.random() - 0.5) * range * 0.1;
+                newValue = Math.max(slider.min, Math.min(slider.max, newValue));
+
+                slider.value = newValue.toFixed(1); // Update slider value
+                updateSliderValue(id, newValue.toFixed(1), sliders[id]); // Update display
+
+                // Manually trigger change event to update vehicle health
+                slider.dispatchEvent(new Event('change'));
             });
-            updateVehicleHealth();
         }, 2000);
     } else {
         // Stop auto simulation
         clearInterval(autoSimulationInterval);
     }
 });
+
 
 // Find nearby garages button
 document.getElementById('findGarages').addEventListener('click', function() {

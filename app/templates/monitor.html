@@ -55,7 +55,7 @@
 
     // Function to establish WebSocket connection and listen for incoming messages
     function connectWebSocket() {
-        socket = new WebSocket('ws://localhost:8765/monitor'); // Replace with actual WebSocket URI
+        socket = new WebSocket('ws://16.170.232.142:8765/monitor');// Replace with actual WebSocket URI
 
         socket.onopen = () => {
             console.log('Connected to the WebSocket server.');
