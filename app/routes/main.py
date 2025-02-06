@@ -168,3 +168,8 @@ def predict_health_status(data):
         'alerts': alerts,
         'maintenance_required': status == 'critical'
     }
+
+@main.route('/monitor',methods=['GET'])
+@login_required
+def monitor():
+    return render_template("monitor.html")
