@@ -38,36 +38,59 @@ def update_vehicle_health(vehicle_id):
     db.session.commit()
     
     response = health_record.to_dict()
-    
+
     # Add action items based on analysis
     action_items = []
+
+    # Fix: Ensure condition reflects actual parameters
+    if 'condition' in response and response['condition'] == 'critical':
+        safe_parameters = all([
+            response['engine_rpm'] > 0,
+            response['oil_pressure'] > 0,
+            response['fuel_pressure'] > 0,
+            response['coolant_pressure'] > 0,
+            response['oil_temperature'] < 100,  # Example threshold
+            response['coolant_temperature'] < 120,  # Example threshold
+        ])
+        
+        if safe_parameters:
+            print("DEBUG: All parameters are in safe range. No critical alert needed.")
+        else:
+            action_items.append({
+                'severity': 'high',
+                'message': 'Engine in critical condition! Immediate attention required.',
+                'action': 'Contact service center immediately'
+            })
     
-    # Check engine condition
-    if response['condition'] == 'critical':
-        action_items.append({
-            'severity': 'high',
-            'message': f'Engine in critical condition! Immediate attention required.',
-            'action': 'Contact service center immediately'
-        })
-    
-    # Check maintenance needs
+    # Fix: Remove stale alerts if no issues exist
     if response['maintenance_needed']:
         action_items.append({
             'severity': 'medium',
             'message': f'Maintenance needed: {response["failure_type"]}',
             'action': 'Schedule maintenance appointment'
         })
-    
-    # Add critical components
-    for component in response['critical_components']:
+
+    # Fix: Only add critical components if issues exist
+    if response['critical_components']:
+        for component in response['critical_components']:
+            if component["current"] < component["min"] or component["current"] > component["max"]:
+                action_items.append({
+                    'severity': 'high' if response['severity'] == 'high' else 'medium',
+                    'message': f'{component["name"]} outside normal range (Current: {component["current"]}, Range: {component["min"]}-{component["max"]})',
+                    'action': f'Check {component["name"].lower()} and service if needed'
+                })
+
+    # If no critical or maintenance issues exist, clear all alerts
+    if not action_items:
         action_items.append({
-            'severity': 'high' if response['severity'] == 'high' else 'medium',
-            'message': f'{component["name"]} outside normal range (Current: {component["current"]}, Range: {component["min"]}-{component["max"]})',
-            'action': f'Check {component["name"].lower()} and service if needed'
+            'severity': 'low',
+            'message': 'All systems are normal.',
+            'action': 'No immediate action needed'
         })
-    
+
     response['action_items'] = action_items
     return jsonify(response)
+
 
 @api.route('/vehicle/<int:vehicle_id>/health/history', methods=['GET'])
 @login_required

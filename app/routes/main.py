@@ -117,28 +117,7 @@ def find_nearby_garages():
     
     if not location:
         return jsonify({'error': 'Invalid pincode'}), 400
-    
-    # Mock data for nearby garages (in real app, use a garage database or Google Places API)
-    nearby_garages = [
-        {
-            'name': 'AutoCare Service Center',
-            'address': f'123 Main Street, {pincode}',
-            'distance': '0.5km',
-            'rating': 4.5,
-            'specialties': ['General Service', 'Engine Repair'],
-            'phone': '+91-9876543210'
-        },
-        {
-            'name': 'Premium Car Care',
-            'address': f'456 Park Road, {pincode}',
-            'distance': '1.2km',
-            'rating': 4.2,
-            'specialties': ['Luxury Cars', 'Electronic Diagnostics'],
-            'phone': '+91-9876543211'
-        }
-    ]
-    
-    return jsonify({'garages': nearby_garages})
+
 
 def predict_health_status(data):
     # Implement prediction logic using kNN
