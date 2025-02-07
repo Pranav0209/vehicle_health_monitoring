@@ -29,32 +29,32 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="oilPressure">Oil Pressure (0-100 PSI)</label>
-                        <input type="range" class="form-control-range" id="oilPressure" min="0" max="100" value="40">
-                        <span id="oilPressureValue">40 PSI</span>
+                        <label for="oilPressure">Oil Pressure (0-10 PSI)</label>
+                        <input type="range" class="form-control-range" id="oilPressure" min="0" max="10" value="6">
+                        <span id="oilPressureValue">6 PSI</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="fuelPressure">Fuel Pressure (0-100 PSI)</label>
-                        <input type="range" class="form-control-range" id="fuelPressure" min="0" max="100" value="50">
-                        <span id="fuelPressureValue">50 PSI</span>
+                        <label for="fuelPressure">Fuel Pressure (0-20 PSI)</label>
+                        <input type="range" class="form-control-range" id="fuelPressure" min="0" max="20" value="18">
+                        <span id="fuelPressureValue">18 PSI</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="coolantPressure">Coolant Pressure (0-50 PSI)</label>
-                        <input type="range" class="form-control-range" id="coolantPressure" min="0" max="50" value="25">
-                        <span id="coolantPressureValue">25 PSI</span>
+                        <label for="coolantPressure">Coolant Pressure (0-5 PSI)</label>
+                        <input type="range" class="form-control-range" id="coolantPressure" min="0" max="5" value="4">
+                        <span id="coolantPressureValue">4 PSI</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="oilTemp">Oil Temperature (0-150°C)</label>
-                        <input type="range" class="form-control-range" id="oilTemp" min="0" max="150" value="80">
-                        <span id="oilTempValue">80°C</span>
+                        <label for="oilTemp">Oil Temperature (60-100°C)</label>
+                        <input type="range" class="form-control-range" id="oilTemp" min="60" max="100" value="85">
+                        <span id="oilTempValue">85°C</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="coolantTemp">Coolant Temperature (0-120°C)</label>
-                        <input type="range" class="form-control-range" id="coolantTemp" min="0" max="120" value="85">
+                        <label for="coolantTemp">Coolant Temperature (55-100°C)</label>
+                        <input type="range" class="form-control-range" id="coolantTemp" min="55" max="100" value="85">
                         <span id="coolantTempValue">85°C</span>
                     </div>
                 </div>
@@ -69,14 +69,14 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="airTemp">Air Temperature (290-310K)</label>
-                        <input type="range" class="form-control-range" id="airTemp" min="290" max="310" value="298">
+                        <label for="airTemp">Air Temperature (290-350K)</label>
+                        <input type="range" class="form-control-range" id="airTemp" min="290" max="350" value="298">
                         <span id="airTempValue">298K</span>
                     </div>
                     
                     <div class="form-group">
-                        <label for="processTemp">Process Temperature (300-320K)</label>
-                        <input type="range" class="form-control-range" id="processTemp" min="300" max="320" value="308">
+                        <label for="processTemp">Process Temperature (200-370K)</label>
+                        <input type="range" class="form-control-range" id="processTemp" min="200" max="370" value="308">
                         <span id="processTempValue">308K</span>
                     </div>
                     
@@ -93,8 +93,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="toolWear">Tool Wear (0-250 min)</label>
-                        <input type="range" class="form-control-range" id="toolWear" min="0" max="250" value="0">
+                        <label for="toolWear">Tool Wear (0-200 min)</label>
+                        <input type="range" class="form-control-range" id="toolWear" min="0" max="200" value="0">
                         <span id="toolWearValue">0 min</span>
                     </div>
                 </div>
@@ -219,7 +219,7 @@ Object.entries(sliders).forEach(([id, unit]) => {
     slider.addEventListener('input', () => {
         updateSliderValue(id, slider.value, unit);
     });
-    slider.addEventListener('change', updateVehicleHealth);
+    slider.addEventListener('change', updateVehicleHealth);  // ✅ Ensure all sliders trigger updates
 });
 
 // Auto simulation toggle

@@ -38,59 +38,62 @@ def update_vehicle_health(vehicle_id):
     db.session.commit()
     
     response = health_record.to_dict()
-
-    # Add action items based on analysis
     action_items = []
 
-    # Fix: Ensure condition reflects actual parameters
-    if 'condition' in response and response['condition'] == 'critical':
-        safe_parameters = all([
-            response['engine_rpm'] > 0,
-            response['oil_pressure'] > 0,
-            response['fuel_pressure'] > 0,
-            response['coolant_pressure'] > 0,
-            response['oil_temperature'] < 100,  # Example threshold
-            response['coolant_temperature'] < 120,  # Example threshold
-        ])
-        
-        if safe_parameters:
-            print("DEBUG: All parameters are in safe range. No critical alert needed.")
-        else:
-            action_items.append({
-                'severity': 'high',
-                'message': 'Engine in critical condition! Immediate attention required.',
-                'action': 'Contact service center immediately'
-            })
-    
-    # Fix: Remove stale alerts if no issues exist
-    if response['maintenance_needed']:
-        action_items.append({
-            'severity': 'medium',
-            'message': f'Maintenance needed: {response["failure_type"]}',
-            'action': 'Schedule maintenance appointment'
-        })
+    # Define safe ranges for all parameters
+    safe_ranges = {
+        'engine_rpm': {'min': 500, 'max': 2000, 'name': 'Engine RPM'},
+        'oil_pressure': {'min': 2.0, 'max': 4.5, 'name': 'Oil Pressure'},
+        'fuel_pressure': {'min': 3.0, 'max': 10.0, 'name': 'Fuel System'},
+        'coolant_pressure': {'min': 1.0, 'max': 3.5, 'name': 'Cooling System'},
+        'oil_temperature': {'min': 60, 'max': 95, 'name': 'Oil Temperature'},
+        'coolant_temperature': {'min': 60, 'max': 90, 'name': 'Coolant Temperature'},
+        # Adding maintenance parameters
+        'air_temperature': {'min': 290, 'max': 320, 'name': 'Air Temperature'},
+        'process_temperature': {'min': 250, 'max': 340, 'name': 'Process Temperature'},
+        'rotation_speed': {'min': 1000, 'max': 2500, 'name': 'Rotation Speed'},
+        'torque': {'min': 20, 'max': 80, 'name': 'Torque'},
+        'tool_wear': {'min': 0, 'max': 150, 'name': 'Tool Wear'}
+    }
 
-    # Fix: Only add critical components if issues exist
-    if response['critical_components']:
-        for component in response['critical_components']:
-            if component["current"] < component["min"] or component["current"] > component["max"]:
+    # Check each parameter against its safe range
+    critical_violation = False
+    for param, value in response.items():
+        if param in safe_ranges:
+            range_info = safe_ranges[param]
+            if value < range_info['min'] or value > range_info['max']:
+                severity = 'high' if (
+                    value < range_info['min'] * 0.8 or 
+                    value > range_info['max'] * 1.2
+                ) else 'medium'
+                
+                if severity == 'high':
+                    critical_violation = True
+                
                 action_items.append({
-                    'severity': 'high' if response['severity'] == 'high' else 'medium',
-                    'message': f'{component["name"]} outside normal range (Current: {component["current"]}, Range: {component["min"]}-{component["max"]})',
-                    'action': f'Check {component["name"].lower()} and service if needed'
+                    'severity': severity,
+                    'message': f"{range_info['name']} out of range: {value} (Range: {range_info['min']}-{range_info['max']})",
+                    'action': f"Inspect and service {range_info['name'].lower()}"
                 })
 
-    # If no critical or maintenance issues exist, clear all alerts
+    # Add critical violation warning if any parameters are severely out of range
+    if critical_violation:
+        action_items.insert(0, {
+            'severity': 'high',
+            'message': 'Critical parameter(s) out of safe range! Immediate attention required.',
+            'action': 'Contact service center immediately'
+        })
+
+    # If no issues found, add all-clear message
     if not action_items:
         action_items.append({
             'severity': 'low',
-            'message': 'All systems are normal.',
-            'action': 'No immediate action needed'
+            'message': 'All systems are within normal parameters.',
+            'action': 'No immediate action required'
         })
 
     response['action_items'] = action_items
     return jsonify(response)
-
 
 @api.route('/vehicle/<int:vehicle_id>/health/history', methods=['GET'])
 @login_required
